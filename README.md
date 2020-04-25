@@ -1,10 +1,12 @@
 # par-dual
 
+[![CI Status](https://github.com/gvolpe/par-dual/workflows/Haskell%20CI/badge.svg)](https://github.com/gvolpe/par-dual/actions)
+
 The [PureScript](https://www.purescript.org/) language defines a [Parallel](https://pursuit.purescript.org/packages/purescript-parallel/4.0.0/docs/Control.Parallel.Class#t:Parallel) typeclass in the `parallel` package. Quoting its documentation:
 
 > The `Parallel` class abstracts over monads which support parallel composition via some related `Applicative`.
 
-The same typeclass is defined in the [Scala](https://www.scala-lang.org/) language, in the [Cats](https://typelevel.org/cats/typeclasses/parallel.html) library.
+The same typeclass is defined in the [Scala](https://www.scala-lang.org/) language, as part of the [Cats](https://typelevel.org/cats/typeclasses/parallel.html) library.
 
 This typeclass has been controversial, in a sense, for not having clear laws. However, it has been proven to be actually useful in applications.
 
@@ -53,12 +55,12 @@ parMapN
   -> m a
 ```
 
-In this case, it takes only two `Monad` computations and a function, but in practice, this function abstracts over its arity to allows us to compose an arbitrary number of computations.
+In this case, it takes only two `Monad` computations and a function, but in practice, this function abstracts over its arity in order to allow us to compose an arbitrary number of computations.
 
 For example, if we define a `Person` datatype with two fields:
 
 ```haskell
-type Name = Refined NonEmpty Text
+type Name = Refined NonEmpty String
 type Age = Refined (GreaterThan 17) Int
 
 data Person = Person
@@ -67,18 +69,18 @@ data Person = Person
   } deriving Show
 ```
 
-We can then validate different inputs, while accumulating errors on the left side, even when our type is `Either [Text] Person`.
+We can then validate different inputs, while accumulating errors on the left side, even when our type is `Either [String] Person`.
 
 ```haskell
-mkPerson :: Int -> Text -> Either [Text] Person
+mkPerson :: Int -> String -> Either [String] Person
 mkPerson a n = parMapN (ref a) (ref n) Person
 ```
 
-Where `ref` is a generic function that converts `RefineException`s to `[Text]`:
+Where `ref` is a generic function that converts `RefineException`s to `[String]`:
 
 ```haskell
-ref :: Predicate p x => x -> Either [Text] (Refined p x)
-ref x = left (\e -> [pack $ show e]) (refine x)
+ref :: Predicate p x => x -> Either [String] (Refined p x)
+ref x = left (\e -> [show e]) (refine x)
 ```
 
 In case of two invalid inputs, we will get as a result a list of validation errors:
@@ -90,7 +92,7 @@ mkPerson 10 "" == Left ["error 1", "error 2"]
 If `parMapN` didn't exist, we could do the same by manually converting between `Either` and `Validation` (which is exactly what `parMapN` does via the `Dual` class).
 
 ```haskell
-mkPerson :: Int -> Text -> Either [Text] Person
+mkPerson :: Int -> String -> Either [String] Person
 mkPerson a n = toEither $ Person <$> fromEither (ref a) <*> fromEither (ref n)
 ```
 
