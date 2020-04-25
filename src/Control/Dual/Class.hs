@@ -14,31 +14,77 @@ import           Data.Validation                ( Validation
                                                 )
 
 {-
- - The @Dual@ class abstracts over @Monad@s that have dual
+ - The @Dual@ class abstracts over @Monad@s that have a dual
  - @Applicative@ instance that acts in a different useful way.
  -
- - It can be seen as an isomorphism at the class level.
+ - E.g., the duality between @Either@ and @Validation@. As well
+ - as the duality between @IO@ and @Concurrently@.
+ -
+ - It can also be seen as an isomorphism defined at the class level.
  -}
 class (Monad m, Applicative f) => Dual f m | m -> f, f -> m where
   parallel :: m :~> f
   sequential :: f :~> m
 
   {-
-  TODO: Abstract over its arity
-
   It is the analogue to using @<$>@ and @<*>@ for the dual
   @Applicative@ of the current @Monad@, as defined by the
   relationship defined by the @Dual@ instance.
   -}
-  parMapN :: m a0 -> m a1 -> (a0 -> a1 -> a) -> m a
-  parMapN ma0 ma1 f =
-    (#) sequential (f <$> (#) parallel ma0 <*> (#) parallel ma1)
+  parMap2 :: m a0 -> m a1 -> (a0 -> a1 -> a) -> m a
+  parMap2 ma0 ma1 f = (#) sequential $ f
+    <$> (#) parallel ma0
+    <*> (#) parallel ma1
 
   {-
-  A convenience function, defined in terms of @parMapN@
+  It is the analogue to using @<$>@ and @<*>@ for the dual
+  @Applicative@ of the current @Monad@, as defined by the
+  relationship defined by the @Dual@ instance.
   -}
-  parTupled :: m a0 -> m a1 -> m (a0, a1)
-  parTupled ma0 ma1 = parMapN ma0 ma1 (,)
+  parMap3 :: m a0 -> m a1 -> m a2 -> (a0 -> a1 -> a2 -> a) -> m a
+  parMap3 ma0 ma1 ma2 f = (#) sequential $ f
+    <$> (#) parallel ma0
+    <*> (#) parallel ma1
+    <*> (#) parallel ma2
+
+  {-
+  It is the analogue to using @<$>@ and @<*>@ for the dual
+  @Applicative@ of the current @Monad@, as defined by the
+  relationship defined by the @Dual@ instance.
+  -}
+  parMap4 :: m a0 -> m a1 -> m a2 -> m a3 -> (a0 -> a1 -> a2 -> a3 -> a) -> m a
+  parMap4 ma0 ma1 ma2 ma3 f = (#) sequential $ f
+    <$> (#) parallel ma0
+    <*> (#) parallel ma1
+    <*> (#) parallel ma2
+    <*> (#) parallel ma3
+
+  {-
+  It is the analogue to using @<$>@ and @<*>@ for the dual
+  @Applicative@ of the current @Monad@, as defined by the
+  relationship defined by the @Dual@ instance.
+  -}
+  parMap5 :: m a0 -> m a1 -> m a2 -> m a3 -> m a4 -> (a0 -> a1 -> a2 -> a3 -> a4 -> a) -> m a
+  parMap5 ma0 ma1 ma2 ma3 ma4 f = (#) sequential $ f
+    <$> (#) parallel ma0
+    <*> (#) parallel ma1
+    <*> (#) parallel ma2
+    <*> (#) parallel ma3
+    <*> (#) parallel ma4
+
+  {-
+  It is the analogue to using @<$>@ and @<*>@ for the dual
+  @Applicative@ of the current @Monad@, as defined by the
+  relationship defined by the @Dual@ instance.
+  -}
+  parMap6 :: m a0 -> m a1 -> m a2 -> m a3 -> m a4 -> m a5 -> (a0 -> a1 -> a2 -> a3 -> a4 -> a5 -> a) -> m a
+  parMap6 ma0 ma1 ma2 ma3 ma4 ma5 f = (#) sequential $ f
+    <$> (#) parallel ma0
+    <*> (#) parallel ma1
+    <*> (#) parallel ma2
+    <*> (#) parallel ma3
+    <*> (#) parallel ma4
+    <*> (#) parallel ma5
 
   {-
   Same as @traverse@, except it uses the dual @Applicative@ of

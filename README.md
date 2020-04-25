@@ -49,7 +49,7 @@ Its power comes from the extra functions that have a default implementation, as 
 The `parMapN` function is analogue to combining `<$>` and `<*>`, for any `Applicative` that is not a `Monad`.
 
 ```haskell
-parMapN
+parMap2
   :: (Applicative f, Monad m, Dual f m)
   => m a0
   -> m a1
@@ -75,7 +75,7 @@ We can then validate different inputs, while accumulating errors on the left sid
 
 ```haskell
 mkPerson :: Int -> String -> Either [String] Person
-mkPerson a n = parMapN (ref a) (ref n) Person
+mkPerson a n = parMap2 (ref a) (ref n) Person
 ```
 
 Where `ref` is a generic function that converts `RefineException`s to `[String]`:
@@ -152,7 +152,7 @@ Let's have a look at the examples shown below.
 ```haskell
 ((+) <$> [1..5] <*> [6..10]) == [7,8,9,10,11,8,9,10,11,12,9,10,11,12,13,10,11,12,13,14,11,12,13,14,15]
 
-parMapN [1..5] [6..10] (+) == [7,9,11,13,15]
+parMap2 [1..5] [6..10] (+) == [7,9,11,13,15]
 ```
 
 The standard version iterates over both lists "sequentially". That is, it takes the first element of the first list, `1` in this case, and then iterates over the second list and it returns the sum of `1` and every value of the second list. It repeats the process until there are no elements left in the first list.

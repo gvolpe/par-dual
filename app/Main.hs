@@ -47,7 +47,7 @@ mkPerson a n = toEither $ Person <$> fromEither (ref a) <*> fromEither (ref n)
 -------------- Parallel Validation -------------
 
 makePerson :: Int -> String -> Eff Person
-makePerson a n = parMapN (ref a) (ref n) Person
+makePerson a n = parMap2 (ref a) (ref n) Person
 
 -------------- Par Traverse -----------------------
 
@@ -82,5 +82,5 @@ n3 :: [Int]
 n3 = (+) <$> n1 <*> n2
 
 n4 :: [Int]
-n4 = parMapN n1 n2 (+)
+n4 = parMap2 n1 n2 (+)
 --n4 = getZipList $ (+) <$> ZipList n1 <*> ZipList n2
