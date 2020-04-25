@@ -5,7 +5,7 @@ module Control.Dual.Class where
 import           Control.Applicative            ( ZipList(..) )
 import           Control.Concurrent.Async       ( Concurrently(..) )
 import           Control.Natural                ( (:~>)(..)
-                                                , unwrapNT
+                                                , (#)
                                                 )
 import           Data.Functor                   ( void )
 import           Data.Validation                ( Validation
@@ -32,7 +32,7 @@ class (Monad m, Applicative f) => Dual f m | m -> f, f -> m where
   -}
   parMapN :: m a0 -> m a1 -> (a0 -> a1 -> a) -> m a
   parMapN ma0 ma1 f =
-    unwrapNT sequential (f <$> unwrapNT parallel ma0 <*> unwrapNT parallel ma1)
+    (#) sequential (f <$> (#) parallel ma0 <*> (#) parallel ma1)
 
   {-
   A convenience function, defined in terms of @parMapN@
@@ -46,9 +46,9 @@ class (Monad m, Applicative f) => Dual f m | m -> f, f -> m where
   -}
   parTraverse :: Traversable t => (a -> m b) -> t a -> m (t b)
   parTraverse f xs =
-    let g a = unwrapNT parallel (f a)
+    let g a = (#) parallel (f a)
         res = sequenceA $ fmap g xs
-    in  unwrapNT sequential res
+    in  (#) sequential res
 
   {-
   Same as @traverse_@, except it uses the dual @Applicative@ of
