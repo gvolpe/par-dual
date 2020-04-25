@@ -10,7 +10,7 @@ The same typeclass is defined in the [Scala](https://www.scala-lang.org/) langua
 
 This typeclass has been controversial, in a sense, for not having clear laws. However, it has been proven to be actually useful in applications.
 
-The idea of this package is to bring this power over to the Haskell language while trying to identify and define stronger laws.
+The idea of this package is to bring this power over to the Haskell language while exploring the design space to identify and define stronger laws (if possible).
 
 ## Dual
 

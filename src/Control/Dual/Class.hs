@@ -11,8 +11,10 @@ import           Data.Validation                ( Validation
                                                 )
 
 {-
- - The `Dual` class abstracts over monads which support
- -  parallel composition via some related `Applicative`.
+ - The @Dual@ class abstracts over @Monad@s that have dual
+ - @Applicative@ instance that acts in a different useful way.
+ -
+ - It can be seen as an isomorphism at the class level.
  -}
 class (Monad m, Applicative f) => Dual f m | m -> f, f -> m where
   parallel :: m :~> f
