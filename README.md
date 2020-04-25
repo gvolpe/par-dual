@@ -155,6 +155,6 @@ Let's have a look at the examples shown below.
 parMap2 [1..5] [6..10] (+) == [7,9,11,13,15]
 ```
 
-The standard version iterates over both lists "sequentially". That is, it takes the first element of the first list, `1` in this case, and then iterates over the second list and it returns the sum of `1` and every value of the second list. It repeats the process until there are no elements left in the first list.
+The standard version iterates over both lists "sequentially". That is, it takes the first element of the first list, `1` in this case, and then iterates over the second list and it returns the sum of `1` and every value of the second list. It repeats the process until there are no elements left in the first list. It is basically the cartesian product of the both collections.
 
-Conversely, `ZipList`s only return the sum of the current elements of both lists such as `1 + 6`, `2 + 7`, and so on. It iterates over both lists in "parallel", effectively only once.
+Conversely, `ZipList`s only return the sum of the current elements of both lists such as `1 + 6`, `2 + 7`, and so on. It iterates over both lists in "parallel", effectively traversing both at once.
