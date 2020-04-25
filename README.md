@@ -124,7 +124,7 @@ traverse f [1..5] == Left ["1"]
 parTraverse f [1..5] == Left ["1","2","3","4","5"]
 ```
 
-Below is another one with `IO`:
+Below there is another one with `IO`:
 
 ```haskell
 randomDelay :: IO ()
@@ -141,7 +141,7 @@ parTraverseIO = parTraverse_ (\n -> randomDelay >> print n) [1 .. 10]
 
 The `traverse` version prints out numbers from 1 to 10 in sequence, while waiting for every random delay. So the output is pretty much `1 2 3 4 5 6 7 8 9 10`.
 
-The `parTraverse` version has a non-deterministic output, since it goes through `Concurrently` (`IO`'s dual). It is exactly what you would expect while using [mapConcurrently](). One possible output is `5 10 6 1 3 2 9 4 7 8`.
+The `parTraverse` version has a non-deterministic output, since it goes through `Concurrently` (`IO`'s dual). It is exactly what you would expect while using [mapConcurrently](https://hackage.haskell.org/package/async-2.2.2/docs/Control-Concurrent-Async.html#v:mapConcurrently). One possible output is `5 10 6 1 3 2 9 4 7 8`.
 
 ### ZipList
 
