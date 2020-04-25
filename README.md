@@ -8,9 +8,11 @@ The [PureScript](https://www.purescript.org/) language defines a [Parallel](http
 
 The same typeclass is defined in the [Scala](https://www.scala-lang.org/) language, as part of the [Cats](https://typelevel.org/cats/typeclasses/parallel.html) library.
 
-This typeclass has been controversial, in a sense, for not having clear laws. However, it has been proven to be actually useful in applications.
+This typeclass has been controversial, in a sense, for not having strong laws. However, it has been proven to be actually useful in real-world applications.
 
 The idea of this package is to bring this power over to the Haskell language while exploring the design space to identify and define stronger laws (if possible).
+
+Originally, this idea has been described in [this blogpost](https://gvolpe.github.io/blog/parallel-typeclass-for-haskell/).
 
 ## Dual
 
