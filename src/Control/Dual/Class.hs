@@ -115,7 +115,7 @@ class (Monad m, Applicative f) => Dual f m | m -> f, f -> m where
   the current @Monad@, as defined by the @Dual@ relationship.
   -}
   parSequence_ :: Traversable t => t (m a) -> m ()
-  parSequence_ xs = parTraverse_ id xs
+  parSequence_ = void . parSequence
 
 --------------------- Instances ----------------------------
 
