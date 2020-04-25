@@ -14,8 +14,7 @@ build-type:          Simple
 extra-source-files:  README.md
 
 library
-  exposed-modules:     Control.Dual
-                     , Control.Dual.Class
+  exposed-modules:     Control.Dual.Class
   build-depends:       base
                      , async
                      , natural-transformation

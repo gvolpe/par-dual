@@ -42,7 +42,7 @@ instance Dual Concurrently IO where
 
 `Validation` comes from the [validators](https://hackage.haskell.org/package/validators) package, whereas `Concurrently` comes from the [async](https://hackage.haskell.org/package/async) package.
 
-Its power comes from defining useful functions in terms of the `Dual` class, as we can see next.
+Its power comes from the extra functions that have a default implementation, as we can see next.
 
 ### parMapN
 

@@ -4,7 +4,6 @@ module Main where
 
 import           Control.Arrow                  ( left )
 import           Control.Concurrent             ( threadDelay )
-import           Control.Dual
 import           Control.Dual.Class
 import           Data.Foldable                  ( traverse_ )
 import           Data.Validation                ( fromEither
