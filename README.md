@@ -46,7 +46,7 @@ Its power comes from the extra functions that have a default implementation, as 
 
 ### parMapN
 
-The `parMapN` set of functions are analogue to combining `<$>` and `<*>`, for any `Applicative` that is not a `Monad`.
+The `parMapN` set of functions are analogue to combining `<$>` and `<*>`, for any dual `Applicative`.
 
 ```haskell
 parMap2
