@@ -5,6 +5,7 @@ module Main where
 import           Control.Arrow                  ( left )
 import           Control.Concurrent             ( threadDelay )
 import           Control.Dual.Class
+import           Data.Bitraversable             ( bitraverse )
 import           Data.Foldable                  ( traverse_ )
 import           Data.Validation                ( fromEither
                                                 , toEither
@@ -13,7 +14,7 @@ import           Refined
 import           System.Random                  ( randomRIO )
 
 main :: IO ()
-main = parTraverseIO
+main = bitraverseTuple3 >> parBitraverseTuple3
 --main = print $ makePerson 10 ""
 
 -------------- Datatypes -------------------------
@@ -84,3 +85,13 @@ n3 = (+) <$> n1 <*> n2
 n4 :: [Int]
 n4 = parMap2 n1 n2 (+)
 --n4 = getZipList $ (+) <$> ZipList n1 <*> ZipList n2
+
+-------------- Par BiTraverse -----------------------
+
+bitraverseTuple3 :: IO ()
+bitraverseTuple3 =
+  print (bitraverse (\n -> id (show n)) (\n -> id (show n)) ("ba", 24, True))
+
+parBitraverseTuple3 :: IO ()
+parBitraverseTuple3 =
+  print (parBitraverse (\n -> id (show n)) (\n -> id (show n)) ("ba", 24, True))

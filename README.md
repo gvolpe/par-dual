@@ -164,3 +164,22 @@ parMap2 [1..5] [6..10] (+) == [7,9,11,13,15]
 The standard version iterates over both lists "sequentially". That is, it takes the first element of the first list, `1` in this case, and then iterates over the second list and it returns the sum of `1` and every value of the second list. It repeats the process until there are no elements left in the first list. It is basically the cartesian product of the both collections.
 
 Conversely, `ZipList`s only return the sum of the current elements of both lists such as `1 + 6`, `2 + 7`, and so on. It iterates over both lists in "parallel", effectively traversing both at once.
+
+### parBitraverse
+
+Operates over any `Bitraversable` such as `Either` or `(,,)`.
+
+```haskell
+res1 = [("ba",'2','T'),("ba",'2','r'),("ba",'2','u'),("ba",'2','e'),("ba",'4','T'),("ba",'4','r'),("ba",'4','u'),("ba",'4','e')]
+
+(bitraverse (\n -> id (show n)) (\n -> id (show n)) ("ba", 24, True)) == res1
+```
+
+The standard `bitraverse` for `(String, Int, Bool)` traverses over the second value and then over the third value, combining the results on each iteration.
+
+```haskell
+res2 = [("ba",'2','T'),("ba",'4','r')]
+(parBitraverse (\n -> id (show n)) (\n -> id (show n)) ("ba", 24, True)) == res2
+```
+
+The dual variant traverses all the values at the same time, terminating as soon as either value is empty.
