@@ -198,3 +198,11 @@ $ nix-shell --run 'cabal new-run par-dual-tests'
   ✓ prop_parBitraverse passed 100 tests.
   ✓ 6 succeeded.
 ```
+
+## Publishing
+
+Generating documentation and tarball file to upload.
+
+```
+$ cabal new-haddock --haddock-for-hackage --enable-doc
+$ cabal new-sdist
