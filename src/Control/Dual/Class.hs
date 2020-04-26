@@ -114,7 +114,7 @@ class (Monad m, Applicative f) => Dual f m | m -> f, f -> m where
     in  (#) sequential res
 
   {- |
-  Same as 'traverse_', except it uses the dual 'Applicative' of
+  Same as 'Data.Foldable.traverse_', except it uses the dual 'Applicative' of
   the current 'Monad', as defined by the 'Dual' relationship.
   -}
   parTraverse_ :: Traversable t => (a -> m b) -> t a -> m ()
@@ -160,7 +160,7 @@ class (Monad m, Applicative f) => Dual f m | m -> f, f -> m where
     in  (#) sequential res
 
   {- |
-  Same as 'bisequence', except it uses the dual 'Applicative' of
+  Same as 'Data.Traversable.bisequence', except it uses the dual 'Applicative' of
   the current 'Monad', as defined by the 'Dual' relationship.
   -}
   parBisequence :: Bitraversable t => t (m a) (m b) -> m (t a b)
