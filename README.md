@@ -147,6 +147,12 @@ The `parTraverse` version has a non-deterministic output, since it goes through 
 
 The dual `Applicative` instance of `[]` is the one defined by `ZipList`, which doesn't have anything to do with parallelism.
 
+```haskell
+instance Dual ZipList [] where
+  parallel   = NT ZipList
+  sequential = NT getZipList
+```
+
 Let's have a look at the examples shown below.
 
 ```haskell
