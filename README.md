@@ -46,7 +46,7 @@ Its power comes from the extra functions that have a default implementation, as 
 
 ### parMapN
 
-The `parMapN` function is analogue to combining `<$>` and `<*>`, for any `Applicative` that is not a `Monad`.
+The `parMapN` set of functions are analogue to combining `<$>` and `<*>`, for any `Applicative` that is not a `Monad`.
 
 ```haskell
 parMap2
@@ -57,7 +57,7 @@ parMap2
   -> m a
 ```
 
-In this case, it takes only two `Monad` computations and a function, but in practice, this function abstracts over its arity in order to allow us to compose an arbitrary number of computations.
+In this case, `parMap2` takes only two computations and a function, but you can find other versions up to `parMap6`. If there is demand, we can consider abstracting over its arity, in order to compose an arbitrary number of computations.
 
 For example, if we define a `Person` datatype with two fields:
 
