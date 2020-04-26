@@ -161,7 +161,7 @@ Let's have a look at the examples shown below.
 parMap2 [1..5] [6..10] (+) == [7,9,11,13,15]
 ```
 
-The standard version iterates over both lists "sequentially". That is, it takes the first element of the first list, `1` in this case, and then iterates over the second list and it returns the sum of `1` and every value of the second list. It repeats the process until there are no elements left in the first list. It is basically the cartesian product of the both collections.
+The standard version iterates over both lists "sequentially". That is, it iterates over the first one, and then over the second one, returning the cartesian product of both lists.
 
 Conversely, `ZipList`s only return the sum of the current elements of both lists such as `1 + 6`, `2 + 7`, and so on. It iterates over both lists in "parallel", effectively traversing both at once.
 
@@ -172,14 +172,29 @@ Operates over any `Bitraversable` such as `Either` or `(,,)`.
 ```haskell
 res1 = [("ba",'2','T'),("ba",'2','r'),("ba",'2','u'),("ba",'2','e'),("ba",'4','T'),("ba",'4','r'),("ba",'4','u'),("ba",'4','e')]
 
-(bitraverse (\n -> id (show n)) (\n -> id (show n)) ("ba", 24, True)) == res1
+(bitraverse show show ("ba", 24, True)) == res1
 ```
 
 The standard `bitraverse` for `(String, Int, Bool)` traverses over the second value and then over the third value, combining the results on each iteration.
 
 ```haskell
-res2 = [("ba",'2','T'),("ba",'4','r')]
-(parBitraverse (\n -> id (show n)) (\n -> id (show n)) ("ba", 24, True)) == res2
+(parBitraverse show show ("ba", 24, True)) == [("ba",'2','T'),("ba",'4','r')]
 ```
 
 The dual variant traverses all the values at the same time, terminating as soon as either value is empty.
+
+## Test suite
+
+The test suite property-checks the functions defined in `Dual` applied to different types of values.
+
+```
+$ nix-shell --run 'cabal new-run par-dual-tests'
+━━━ Main ━━━
+  ✓ prop_parMap2_on_success passed 100 tests.
+  ✓ prop_parMap2_accumulates_errors passed 100 tests.
+  ✓ prop_parTraverse_accumulates_errors passed 100 tests.
+  ✓ prop_parTraverse_io_is_concurrent passed 10 tests.
+  ✓ prop_parMap2_on_lists passed 100 tests.
+  ✓ prop_parBitraverse passed 100 tests.
+  ✓ 6 succeeded.
+```
