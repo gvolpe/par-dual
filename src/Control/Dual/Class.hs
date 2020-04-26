@@ -7,6 +7,9 @@ import           Control.Concurrent.Async       ( Concurrently(..) )
 import           Control.Natural                ( (:~>)(..)
                                                 , (#)
                                                 )
+import           Data.Bitraversable             ( Bitraversable
+                                                , bitraverse
+                                                )
 import           Data.Functor                   ( void )
 import           Data.Validation                ( Validation
                                                 , toEither
@@ -91,9 +94,9 @@ class (Monad m, Applicative f) => Dual f m | m -> f, f -> m where
   the current @Monad@, as defined by the @Dual@ relationship.
   -}
   parTraverse :: Traversable t => (a -> m b) -> t a -> m (t b)
-  parTraverse f xs =
+  parTraverse f ta =
     let g a = (#) parallel (f a)
-        res = sequenceA $ fmap g xs
+        res = sequenceA $ fmap g ta
     in  (#) sequential res
 
   {-
@@ -108,7 +111,7 @@ class (Monad m, Applicative f) => Dual f m | m -> f, f -> m where
   the current @Monad@, as defined by the @Dual@ relationship.
   -}
   parSequence :: Traversable t => t (m a) -> m (t a)
-  parSequence xs = parTraverse id xs
+  parSequence = parTraverse id
 
   {-
   Same as @sequence_@, except it uses the dual @Applicative@ of
@@ -116,6 +119,38 @@ class (Monad m, Applicative f) => Dual f m | m -> f, f -> m where
   -}
   parSequence_ :: Traversable t => t (m a) -> m ()
   parSequence_ = void . parSequence
+
+  {-
+  Same as @*>@, except it uses the dual @Applicative@ of
+  the current @Monad@, as defined by the @Dual@ relationship.
+  -}
+  parProductR :: m a -> m b -> m b
+  parProductR ma mb = parMap2 ma mb (\_ b -> b)
+
+  {-
+  Same as @<*@, except it uses the dual @Applicative@ of
+  the current @Monad@, as defined by the @Dual@ relationship.
+  -}
+  parProductL :: m a -> m b -> m a
+  parProductL ma mb = parMap2 ma mb const
+
+  {-
+  Same as @bitraverse@, except it uses the dual @Applicative@ of
+  the current @Monad@, as defined by the @Dual@ relationship.
+  -}
+  parBitraverse :: Bitraversable t => (a -> m c) -> (b -> m d) -> t a b -> m (t c d)
+  parBitraverse ma mb tab =
+    let fa  = (\a -> (#) parallel (ma a))
+        fb  = (\b -> (#) parallel (mb b))
+        res = bitraverse fa fb tab
+    in  (#) sequential res
+
+  {-
+  Same as @bisequence@, except it uses the dual @Applicative@ of
+  the current @Monad@, as defined by the @Dual@ relationship.
+  -}
+  parBisequence :: Bitraversable t => t (m a) (m b) -> m (t a b)
+  parBisequence = parBitraverse id id
 
 --------------------- Instances ----------------------------
 
