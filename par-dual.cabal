@@ -2,13 +2,13 @@ cabal-version:       3.0
 
 name:                par-dual
 version:             0.1.0.0
--- synopsis:
 description:         Defines a Dual typeclass for a relationship Parallel -> Sequential
 homepage:            https://github.com/gvolpe/par-dual
 bug-reports:         https://github.com/gvolpe/par-dual/issues
 license:             Apache-2.0
 license-file:        LICENSE
 author:              Gabriel Volpe
+copyright:           2020 - Gabriel Volpe
 maintainer:          volpegabriel@gmail.com
 build-type:          Simple
 extra-source-files:  README.md
