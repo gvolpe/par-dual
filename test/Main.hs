@@ -1,21 +1,49 @@
-{-# LANGUAGE DataKinds, OverloadedStrings #-}
+{-# LANGUAGE DataKinds, OverloadedStrings, TemplateHaskell #-}
 
 module Main where
 
 import           Control.Arrow                  ( left )
 import           Control.Concurrent             ( threadDelay )
 import           Control.Dual.Class
+import           Control.Monad                  ( unless )
 import           Data.Bitraversable             ( bitraverse )
 import           Data.Foldable                  ( traverse_ )
 import           Data.Validation                ( fromEither
                                                 , toEither
                                                 )
+import           Hedgehog
+import qualified Hedgehog.Gen                  as Gen
+import qualified Hedgehog.Range                as Range
 import           Refined
-import           System.Random                  ( randomRIO )
+import           System.Exit (exitFailure)
 
 main :: IO ()
-main = bitraverseTuple3 >> parBitraverseTuple3
---main = print $ makePerson 10 ""
+main = do
+  results <- sequence [checkParallel dualTests]
+  unless (and results) $ exitFailure
+
+prop_parMap2_eq_either_on_success :: Property
+prop_parMap2_eq_either_on_success = property $ do
+  a <- forAll $ Gen.int (Range.linear 18 100)
+  n <- forAll $ Gen.list (Range.linear 1 50) Gen.alpha
+  let res = parMap2 (ref a) (ref n) Person
+      exp = Person <$> ref a <*> ref n
+  res === exp
+
+prop_parMap2_accumulates_errors :: Property
+prop_parMap2_accumulates_errors = property $ do
+  a <- forAll $ Gen.int (Range.linear 0 17)
+  n <- forAll $ Gen.list (Range.linear 0 0) Gen.alpha
+  let
+    res = parMap2 (ref a) (ref n) Person
+    exp = Left
+      [ "The predicate (GreaterThan 17) does not hold: \n  Value is not greater than 17"
+      , "The predicate (SizeGreaterThan 0) does not hold: \n  Size of Foldable is not greater than 0\n  Size is: 0"
+      ]
+  res === exp
+
+dualTests :: Group
+dualTests = $$(discover)
 
 -------------- Datatypes -------------------------
 
@@ -25,7 +53,7 @@ type Age = Refined (GreaterThan 17) Int
 data Person = Person
   { personAge :: Age
   , personName :: Name
-  } deriving Show
+  } deriving (Eq, Show)
 
 -------------- Sequential Validation -------------
 
@@ -52,10 +80,8 @@ makePerson a n = parMap2 (ref a) (ref n) Person
 
 -------------- Par Traverse -----------------------
 
-randomDelay :: IO ()
-randomDelay = do
-  r <- randomRIO (1, 10)
-  threadDelay (r * 500000)
+fixedDelay :: IO ()
+fixedDelay = threadDelay (1 * 500000)
 
 traverseEither :: IO ()
 traverseEither =
@@ -66,10 +92,10 @@ parTraverseEither =
   print (parTraverse (\n -> Left [show n]) [1 .. 10] :: Either [String] [Int])
 
 traverseIO :: IO ()
-traverseIO = traverse_ (\n -> randomDelay >> print n) [1 .. 10]
+traverseIO = traverse_ (\n -> fixedDelay >> print n) [1 .. 10]
 
 parTraverseIO :: IO ()
-parTraverseIO = parTraverse_ (\n -> randomDelay >> print n) [1 .. 10]
+parTraverseIO = parTraverse_ (\n -> fixedDelay >> print n) [1 .. 10]
 
 -------------- Zip Lists --------------------------
 

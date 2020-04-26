@@ -21,13 +21,17 @@ library
                      , validators
   hs-source-dirs:      src
   default-language:    Haskell2010
+  ghc-options:         -Wall -threaded -with-rtsopts -N
 
-executable par-dual
+test-Suite par-dual-tests
+  type:                exitcode-stdio-1.0
   main-is:             Main.hs
-  hs-source-dirs:      app
+  hs-source-dirs:      test
   build-depends:       base
+                     , hedgehog
                      , par-dual
-                     , random
                      , refined
+                     , template-haskell
                      , validators
   default-language:    Haskell2010
+  ghc-options:         -Wall -threaded -with-rtsopts -N
