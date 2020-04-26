@@ -15,10 +15,10 @@ extra-source-files:  README.md
 
 library
   exposed-modules:     Control.Dual.Class
-  build-depends:       base
-                     , async
-                     , natural-transformation
-                     , validators
+  build-depends:       base                   >= 4.13.0 && < 4.14
+                     , async                  >= 2.2.2 && < 2.3
+                     , natural-transformation >= 0.4 && < 0.5
+                     , validators             >= 0.0.1 && < 0.1
   hs-source-dirs:      src
   default-language:    Haskell2010
   ghc-options:         -Wall -threaded -with-rtsopts -N
