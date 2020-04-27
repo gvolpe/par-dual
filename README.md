@@ -14,35 +14,35 @@ The idea of this package is to bring this power over to the Haskell language whi
 
 Originally, this idea has been described in [this blogpost](https://gvolpe.github.io/blog/parallel-typeclass-for-haskell/).
 
-## Dual
+## ParDual
 
 Here's the definition of the same typeclass in Haskell:
 
 ```haskell
-class (Monad m, Applicative f) => Dual f m | m -> f, f -> m where
+class (Monad m, Applicative f) => ParDual f m | m -> f, f -> m where
   parallel :: m :~> f
   sequential :: f :~> m
 ```
 
-I decided to call it `Dual` instead of `Parallel`, because this *duality* doesn't always define a `sequential` and `parallel` relationship. Such is the case between `[]` and `ZipList`, as we will soon discover.
+I decided to call it `ParDual` instead of `Parallel`, because this *duality* doesn't always define a `sequential` and `parallel` relationship. Such is the case between `[]` and `ZipList`, as we will soon discover.
 
 It defines two functions, which are natural transformations between a `Monad m` and an `Applicative f`. It could also be seen as a typeclass version of an isomorphism such as `forall a . Iso (f a) (m a)`.
 
 The most common and useful relationships are both `Either` / `Validation` and `IO` / `Concurrently`.
 
 ```haskell
-instance Semigroup e => Dual (Validation e) (Either e) where
+instance Semigroup e => ParDual (Validation e) (Either e) where
   parallel   = NT fromEither
   sequential = NT toEither
 
-instance Dual Concurrently IO where
+instance ParDual Concurrently IO where
   parallel   = NT Concurrently
   sequential = NT runConcurrently
 ```
 
 `Validation` comes from the [validators](https://hackage.haskell.org/package/validators) package, whereas `Concurrently` comes from the [async](https://hackage.haskell.org/package/async) package.
 
-Additionally, we can define a lot of powerful functions solely in terms of `Applicative`, `Monad`, and `Dual`. A few other functions might require extra requirements, such as `Traversable`.
+Additionally, we can define a lot of powerful functions solely in terms of `Applicative`, `Monad`, and `ParDual`. A few other functions might require extra requirements, such as `Traversable`.
 
 ### parMapN
 
@@ -50,7 +50,7 @@ The `parMapN` set of functions are analogue to combining `<$>` and `<*>`, for an
 
 ```haskell
 parMap2
-  :: (Applicative f, Monad m, Dual f m)
+  :: (Applicative f, Monad m, ParDual f m)
   => m a0
   -> m a1
   -> (a0 -> a1 -> a)
@@ -91,7 +91,7 @@ In case of two invalid inputs, we will get as a result a list of validation erro
 mkPerson 10 "" == Left ["error 1", "error 2"]
 ```
 
-If `parMapN` didn't exist, we could do the same by manually converting between `Either` and `Validation` (which is exactly what `parMapN` does via the `Dual` class).
+If `parMapN` didn't exist, we could do the same by manually converting between `Either` and `Validation` (which is exactly what `parMapN` does via the `ParDual` class).
 
 ```haskell
 mkPerson :: Int -> String -> Either [String] Person
@@ -102,11 +102,11 @@ Though, we can see how cumbersome and boilerplatey it gets.
 
 ### parTraverse
 
-Another great application of the `Dual` class is the definition of a `traverse` function that takes a `Monad` and a `Traversable t`, but that operates over its dual `Applicative`, and at the end it converts back to this `Monad`.
+Another great application of the `ParDual` class is the definition of a `traverse` function that takes a `Monad` and a `Traversable t`, but that operates over its dual `Applicative`, and at the end it converts back to this `Monad`.
 
 ```haskell
 parTraverse
-  :: (Traversable t, Applicative f, Monad m, Dual f m)
+  :: (Traversable t, Applicative f, Monad m, ParDual f m)
   => (a -> m b)
   -> t a
   -> m (t b)
@@ -148,7 +148,7 @@ The `parTraverse` version has a non-deterministic output, since it goes through 
 The dual `Applicative` instance of `[]` is the one defined by `ZipList`, which doesn't have anything to do with parallelism.
 
 ```haskell
-instance Dual ZipList [] where
+instance ParDual ZipList [] where
   parallel   = NT ZipList
   sequential = NT getZipList
 ```
@@ -185,7 +185,7 @@ The dual variant traverses all the values at the same time, terminating as soon 
 
 ## Test suite
 
-The test suite property-checks the functions defined in `Dual` applied to different types of values.
+The test suite property-checks the functions defined in `ParDual` applied to different types of values.
 
 ```
 $ nix-shell --run 'cabal new-run par-dual-tests'
@@ -205,4 +205,5 @@ Generating documentation and tarball file to upload.
 
 ```
 $ cabal new-haddock --haddock-for-hackage --enable-doc
+$ cabal upload -d dist-newstyle/par-dual-0.1.0.0-docs.tar.gz
 $ cabal new-sdist
