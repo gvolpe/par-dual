@@ -4,7 +4,7 @@ module Main where
 
 import           Control.Arrow                  ( left )
 import           Control.Concurrent             ( threadDelay )
-import           Control.Dual.Class
+import           Control.ParDual.Class
 import           Control.Monad                  ( unless )
 import           Data.Bitraversable             ( bitraverse )
 import           Data.Foldable                  ( traverse_ )

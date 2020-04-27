@@ -2,8 +2,8 @@ cabal-version:       2.4
 
 name:                par-dual
 version:             0.1.0.0
-synopsis:            Dual class for Parallel <-> Sequential
-description:         Defines a Dual typeclass for a relationship Parallel <-> Sequential
+synopsis:            ParDual class for Parallel <-> Sequential
+description:         Defines a ParDual class for a Parallel <-> Sequential relationship
 homepage:            https://github.com/gvolpe/par-dual
 bug-reports:         https://github.com/gvolpe/par-dual/issues
 license:             Apache-2.0
@@ -16,7 +16,7 @@ build-type:          Simple
 extra-source-files:  README.md
 
 library
-  exposed-modules:     Control.Dual.Class
+  exposed-modules:     Control.ParDual.Class
   build-depends:       base                   >= 4.13.0 && < 4.14
                      , async                  >= 2.2.2 && < 2.3
                      , natural-transformation >= 0.4 && < 0.5
