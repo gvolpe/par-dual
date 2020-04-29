@@ -20,8 +20,8 @@ Here's the definition of the same typeclass in Haskell:
 
 ```haskell
 class (Monad m, Applicative f) => ParDual f m | m -> f, f -> m where
-  parallel :: m :~> f
-  sequential :: f :~> m
+  parallel :: forall a . m a -> f a
+  sequential :: forall a . f a -> m a
 ```
 
 I decided to call it `ParDual` instead of `Parallel`, because this *duality* doesn't always define a `sequential` and `parallel` relationship. Such is the case between `[]` and `ZipList`, as we will soon discover.
@@ -32,12 +32,12 @@ The most common and useful relationships are both `Either` / `Validation` and `I
 
 ```haskell
 instance Semigroup e => ParDual (Validation e) (Either e) where
-  parallel   = NT fromEither
-  sequential = NT toEither
+  parallel   = fromEither
+  sequential = toEither
 
 instance ParDual Concurrently IO where
-  parallel   = NT Concurrently
-  sequential = NT runConcurrently
+  parallel   = Concurrently
+  sequential = runConcurrently
 ```
 
 `Validation` comes from the [validators](https://hackage.haskell.org/package/validators) package, whereas `Concurrently` comes from the [async](https://hackage.haskell.org/package/async) package.
@@ -149,8 +149,8 @@ The dual `Applicative` instance of `[]` is the one defined by `ZipList`, which d
 
 ```haskell
 instance ParDual ZipList [] where
-  parallel   = NT ZipList
-  sequential = NT getZipList
+  parallel   = ZipList
+  sequential = getZipList
 ```
 
 Let's have a look at the examples shown below.
